@@ -69,11 +69,15 @@ export default async ({ addon, msg, safeMsg }) => {
     .map(({ url }) => url)
     .map(extractUrl);
 
+  const enabledAddons = await addon.self.getEnabledAddons();
+  const turboWarpEnabled = enabledAddons.includes("cloud-to-turbowarp");
+
   window.vue = new Vue({
     el: "body",
     data: {
       projects: [],
       projectsVisible: false,
+      turboWarpEnabled,
       messages: {
         loadingMsg: msg("loading"),
         noUsersMsg: msg("no-users"),
@@ -83,6 +87,7 @@ export default async ({ addon, msg, safeMsg }) => {
         addStudioDescription: msg("add-studio-desc"),
         added: msg("added"),
         changeDisplay2: msg("change-display-2"),
+        turboWarpBanner: msg("turbo-warp-banner"),
       },
       projectsChecked: 0,
       error: null,

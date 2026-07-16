@@ -19,25 +19,12 @@
       "link": "https://scratch.mit.edu/users/Ash-Luigi/"
     }
   ],
-  "settings": [
-    {
-      "name": "Redirect to TurboWarp cloud servers",
-      "id": "enable",
-      "type": "boolean",
-      "default": false
-    }
-  ],
   "dynamicEnable": true,
   "dynamicDisable": true,
   "userscripts": [
     {
       "url": "userscript.js",
-      "matches": ["https://scratch.mit.edu/*"],
-      "if": {
-        "settings": {
-          "enable": true
-        }
-      }
+      "matches": ["https://scratch.mit.edu/*"]
     }
   ],
   "versionAdded": "1.40.0",
