@@ -4,6 +4,9 @@ export default async function ({ addon, console }) {
   const RealWebSocket = window.WebSocket;
 
   function PatchedWebSocket(url, protocols) {
+    if (!(this instanceof PatchedWebSocket)) {
+      return protocols !== undefined ? new RealWebSocket(url, protocols) : new RealWebSocket(url);
+    }
     try {
       const parsed = new URL(url);
       if (parsed.hostname === SCRATCH_CLOUD_HOST) {
@@ -14,14 +17,21 @@ export default async function ({ addon, console }) {
     } catch (e) {
       // Invalid URL, pass through unchanged
     }
-    if (protocols !== undefined) {
-      return new RealWebSocket(url, protocols);
-    }
-    return new RealWebSocket(url);
+    return protocols !== undefined ? new RealWebSocket(url, protocols) : new RealWebSocket(url);
   }
 
   PatchedWebSocket.prototype = RealWebSocket.prototype;
   PatchedWebSocket.prototype.constructor = PatchedWebSocket;
+  Object.defineProperty(PatchedWebSocket, "name", { value: "WebSocket" });
+
+  for (const key of Object.getOwnPropertyNames(RealWebSocket)) {
+    if (key !== "prototype" && key !== "length" && key !== "name") {
+      try {
+        PatchedWebSocket[key] = RealWebSocket[key];
+      } catch (e) {}
+    }
+  }
+
   window.WebSocket = PatchedWebSocket;
 
   addon.self.addEventListener("disabled", () => {
