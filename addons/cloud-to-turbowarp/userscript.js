@@ -3,26 +3,25 @@ export default async function ({ addon, console }) {
   const TURBOWARP_CLOUD_HOST = "clouddata.turbowarp.org";
   const RealWebSocket = window.WebSocket;
 
-  class PatchedWebSocket extends RealWebSocket {
-    constructor(url, protocols) {
-      try {
-        const parsed = new URL(url);
-        if (parsed.hostname === SCRATCH_CLOUD_HOST) {
-          parsed.hostname = TURBOWARP_CLOUD_HOST;
-          console.log(`Redirecting cloud connection: ${url} → ${parsed.href}`);
-          url = parsed.href;
-        }
-      } catch (e) {
-        // Invalid URL, pass through unchanged
+  function PatchedWebSocket(url, protocols) {
+    try {
+      const parsed = new URL(url);
+      if (parsed.hostname === SCRATCH_CLOUD_HOST) {
+        parsed.hostname = TURBOWARP_CLOUD_HOST;
+        console.log(`Redirecting cloud connection: ${url} → ${parsed.href}`);
+        url = parsed.href;
       }
-      if (protocols !== undefined) {
-        super(url, protocols);
-      } else {
-        super(url);
-      }
+    } catch (e) {
+      // Invalid URL, pass through unchanged
     }
+    if (protocols !== undefined) {
+      return new RealWebSocket(url, protocols);
+    }
+    return new RealWebSocket(url);
   }
 
+  PatchedWebSocket.prototype = RealWebSocket.prototype;
+  PatchedWebSocket.prototype.constructor = PatchedWebSocket;
   window.WebSocket = PatchedWebSocket;
 
   addon.self.addEventListener("disabled", () => {
