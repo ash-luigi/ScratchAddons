@@ -1,5 +1,4 @@
 export default async function ({ addon, console }) {
-  window.alert("Cloud-to-TurboWarp: userscript is running!");
   const SCRATCH_CLOUD_HOST = "clouddata.scratch.mit.edu";
   const TURBOWARP_CLOUD_HOST = "clouddata.turbowarp.org";
   const RealWebSocket = window.WebSocket;
