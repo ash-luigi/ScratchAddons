@@ -68,6 +68,7 @@ export default async ({ addon, msg, safeMsg }) => {
     .get("displayedGames")
     .map(({ url }) => url)
     .map(extractUrl);
+
   window.vue = new Vue({
     el: "body",
     data: {
